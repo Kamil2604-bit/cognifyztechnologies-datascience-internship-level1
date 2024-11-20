@@ -1,0 +1,54 @@
+#LEVEL:1 Task-3 - Geospatial Analysis
+# Import necessary libraries
+import pandas as pd
+import geopandas as gpd
+import folium
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load the dataset
+file_path = r'C:\Users\LENOVO\Downloads\Dataset .csv'  
+df = pd.read_csv(file_path)
+
+# Step 1: Visualize Restaurant Locations on a Map
+if 'Latitude' in df.columns and 'Longitude' in df.columns:
+    print("\nVisualizing restaurant locations on a map...")
+
+    # Create a folium map centered at the average latitude and longitude
+    avg_lat, avg_lon = df['Latitude'].mean(), df['Longitude'].mean()
+    restaurant_map = folium.Map(location=[avg_lat, avg_lon], zoom_start=10)
+
+    # Add restaurant markers to the map
+    for _, row in df.iterrows():
+        folium.Marker(
+            location=[row['Latitude'], row['Longitude']],
+            popup=row['Restaurant Name'] if 'Restaurant Name' in df.columns else None
+        ).add_to(restaurant_map)
+
+    # Save the map as an HTML file
+    map_file_path = r'C:\Users\LENOVO\Restaurant_Map.html'  # Specify output path
+    restaurant_map.save(map_file_path)
+    print(f"Map saved to: {map_file_path}")
+
+# Step 2: Analyze Distribution of Restaurants Across Cities or Countries
+if 'City' in df.columns:
+    print("\nDistribution of Restaurants Across Cities:")
+    city_counts = df['City'].value_counts().head(10)
+    print(city_counts)
+
+    # Plot the distribution
+    plt.figure(figsize=(10, 6))
+    city_counts.plot(kind='bar', color='skyblue')
+    plt.title("Top Cities with Highest Number of Restaurants")
+    plt.xlabel("City")
+    plt.ylabel("Count")
+    plt.xticks(rotation=45)
+    plt.show()
+
+    # Calculate correlation (if numerical representation is meaningful)
+    if df[['Latitude', 'Longitude', 'Aggregate rating']].dropna().shape[0] > 1:
+        corr = df[['Latitude', 'Longitude', 'Aggregate rating']].corr()
+        print("\nCorrelation Matrix:")
+        print(corr)
+    else:
+        print("\nInsufficient data for meaningful correlation analysis.")
