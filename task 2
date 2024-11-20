@@ -1,0 +1,65 @@
+#LEVEL:1 Task-2 - Descriptive Analysis
+# Import necessary libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load the dataset
+file_path = r'C:\Users\LENOVO\Downloads\Dataset .csv'  
+df = pd.read_csv(file_path)
+
+# Step 1: Basic Statistical Measures for Numerical Columns
+numerical_columns = df.select_dtypes(include=['int64', 'float64']).columns
+print("\nBasic Statistical Measures:")
+print(df[numerical_columns].describe())
+
+# Calculate additional statistics: median
+for col in numerical_columns:
+    print(f"Median of {col}: {df[col].median()}")
+
+# Step 2: Explore Distribution of Categorical Variables
+categorical_columns = ['Country Code', 'City', 'Cuisines']  # Update column names if they differ in your dataset
+for col in categorical_columns:
+    print(f"\nDistribution of '{col}':")
+    print(df[col].value_counts())
+
+    # Plot the distribution of the categorical variable
+    plt.figure(figsize=(10, 6))
+    df[col].value_counts().head(10).plot(kind='bar', color='skyblue')
+    plt.title(f"Top Categories in '{col}'")
+    plt.xlabel(col)
+    plt.ylabel("Count")
+    plt.xticks(rotation=45)
+    plt.show()
+
+# Step 3: Identify Top Cuisines
+if 'Cuisines' in df.columns:
+    print("\nTop Cuisines:")
+    cuisines = df['Cuisines'].str.split(',').explode().str.strip()  # Handle multiple cuisines per restaurant
+    top_cuisines = cuisines.value_counts().head(10)
+    print(top_cuisines)
+
+    # Plot top cuisines
+    plt.figure(figsize=(10, 6))
+    top_cuisines.plot(kind='bar', color='orange')
+    plt.title("Top Cuisines")
+    plt.xlabel("Cuisine")
+    plt.ylabel("Count")
+    plt.xticks(rotation=45)
+    plt.show()
+
+# Step 4: Identify Top Cities with Highest Number of Restaurants
+if 'City' in df.columns:
+    print("\nTop Cities with Highest Number of Restaurants:")
+    top_cities = df['City'].value_counts().head(10)
+    print(top_cities)
+
+    # Plot top cities
+    plt.figure(figsize=(10, 6))
+    top_cities.plot(kind='bar', color='green')
+    plt.title("Top Cities with Highest Number of Restaurants")
+    plt.xlabel("City")
+    plt.ylabel("Count")
+    plt.xticks(rotation=45)
+    plt.show()
+
